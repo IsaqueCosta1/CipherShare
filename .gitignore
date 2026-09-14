@@ -1,0 +1,16 @@
+# Configuração local com segredos reais
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+
+# Certificados de desenvolvimento (gerados na Fase 6)
+nginx/certs/
+
+# Sistema operacional / editores
+.DS_Store
+.idea/
+.vscode/

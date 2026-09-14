@@ -1,0 +1,8 @@
+# Dependências da API. Versões fixadas para que a imagem seja reprodutível.
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+pydantic-settings==2.7.0
+SQLAlchemy==2.0.36
+psycopg[binary]==3.2.3
+alembic==1.14.0
+minio==7.2.12

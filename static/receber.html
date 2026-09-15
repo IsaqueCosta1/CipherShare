@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Receber arquivo — Troca confidencial</title>
+    <meta
+      name="description"
+      content="Decifragem no navegador a partir do arquivo de credenciais."
+    />
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="/css/estilo.css" />
+    <script type="module" src="/js/receber.js"></script>
+  </head>
+  <body>
+    <header class="topo">
+      <a class="marca" href="/">cofre<span>.</span></a>
+      <nav aria-label="Telas">
+        <a href="/">Enviar</a>
+        <a href="/receber.html" aria-current="page">Receber</a>
+      </nav>
+    </header>
+
+    <main>
+      <p class="estado" id="estado" data-estado="repouso" role="status" aria-live="polite">
+        Em repouso
+      </p>
+
+      <h1>Receber um arquivo</h1>
+      <p class="subtitulo">
+        Use o arquivo de credenciais que você recebeu. A chave que ele carrega
+        não sai desta aba: o download e a decifragem acontecem aqui.
+      </p>
+
+      <!-- Passo 1: credenciais -->
+      <section id="passo-selecao" aria-labelledby="titulo-selecao">
+        <h2 id="titulo-selecao" hidden>Arquivo de credenciais</h2>
+        <div
+          class="dropzone"
+          id="dropzone"
+          role="button"
+          tabindex="0"
+          aria-describedby="dropzone-ajuda"
+        >
+          <strong class="dropzone-titulo">
+            Arraste o arquivo credenciais-*.json ou clique para escolher
+          </strong>
+          <span class="dropzone-ajuda" id="dropzone-ajuda">
+            É o JSON baixado por quem enviou o arquivo.
+          </span>
+        </div>
+        <input class="input-arquivo" type="file" id="entrada-credenciais" accept="application/json,.json" />
+      </section>
+
+      <!-- Passo 2: disponibilidade -->
+      <section class="cartao" id="painel-disponibilidade" hidden aria-labelledby="titulo-disponibilidade">
+        <h2 id="titulo-disponibilidade">Arquivo disponível</h2>
+        <dl class="dados">
+          <dt>Nome original</dt>
+          <dd id="dado-nome">—</dd>
+          <dt>Tamanho</dt>
+          <dd id="dado-tamanho">—</dd>
+          <dt>Localizador</dt>
+          <dd class="valor-longo" id="dado-localizador">—</dd>
+          <dt>Validade</dt>
+          <dd id="dado-validade">—</dd>
+        </dl>
+        <div class="acoes">
+          <button class="botao" type="button" id="botao-baixar">Baixar e decifrar</button>
+          <button class="botao botao-secundario" type="button" id="botao-trocar">
+            Usar outras credenciais
+          </button>
+        </div>
+      </section>
+
+      <!-- Passo 3: progresso -->
+      <section class="cartao" id="painel-progresso" hidden aria-labelledby="titulo-progresso">
+        <h2 id="titulo-progresso">Processando</h2>
+
+        <div class="progresso">
+          <span class="progresso-titulo" id="rotulo-download">Download da cifra</span>
+          <div
+            id="progresso-download"
+            class="progress-wrapper"
+            role="progressbar"
+            aria-labelledby="rotulo-download"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            hidden
+          >
+            <div class="progress-track"><div class="progress-bar"></div></div>
+            <span class="progress-label"></span>
+          </div>
+        </div>
+
+        <div class="progresso">
+          <span class="progresso-titulo" id="rotulo-decifragem">Decifragem</span>
+          <div
+            id="progresso-decifragem"
+            class="progress-wrapper"
+            role="progressbar"
+            aria-labelledby="rotulo-decifragem"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            hidden
+          >
+            <div class="progress-track"><div class="progress-bar"></div></div>
+            <span class="progress-label"></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Passo 4: concluído -->
+      <section class="cartao" id="painel-resultado" hidden aria-labelledby="titulo-resultado">
+        <h2 id="titulo-resultado">Arquivo recuperado</h2>
+        <p id="texto-resultado">
+          A etiqueta de autenticidade foi conferida: o conteúdo está íntegro e
+          veio de quem tinha a chave.
+        </p>
+        <dl class="dados">
+          <dt>Salvo como</dt>
+          <dd id="resultado-nome">—</dd>
+          <dt>Tamanho</dt>
+          <dd id="resultado-tamanho">—</dd>
+        </dl>
+        <div class="acoes">
+          <button class="botao" type="button" id="botao-salvar-novamente">Salvar novamente</button>
+          <button class="botao botao-secundario" type="button" id="botao-recomecar">
+            Receber outro arquivo
+          </button>
+        </div>
+      </section>
+
+      <p class="erro" id="erro" role="alert" hidden></p>
+    </main>
+
+    <footer class="rodape">
+      <p>
+        O arquivo cifrado continua no servidor até expirar. Quem tiver o JSON de
+        credenciais pode baixá-lo de novo durante esse período.
+      </p>
+    </footer>
+  </body>
+</html>

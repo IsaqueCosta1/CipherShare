@@ -6,14 +6,19 @@
 
 services:
   nginx:
-    image: nginx:1.27-alpine
+    build: ./nginx
     depends_on:
       - api
     ports:
-      # Porta do host configurável para conviver com outros serviços locais.
+      # Portas do host configuráveis para conviver com outros serviços locais.
+      # O HTTP existe só para redirecionar ao HTTPS.
       - "${HTTP_PORT:-80}:80"
+      - "${HTTPS_PORT:-443}:443"
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      # Os arquivos estáticos são montados, não copiados: editar uma tela não
+      # exige reconstruir imagem nenhuma.
+      - ./static:/usr/share/nginx/html:ro
+      - nginx_certs:/etc/nginx/certs
     restart: unless-stopped
 
   api:
@@ -64,6 +69,30 @@ services:
       retries: 10
     restart: unless-stopped
 
+  # Suíte de testes. Não sobe com o `docker compose up`: roda sob demanda com
+  #     docker compose --profile test run --rm tests
+  tests:
+    build: ./tests
+    profiles: ["test"]
+    env_file:
+      - .env
+    environment:
+      # Os testes falam com o sistema pelo Nginx, em HTTPS, como um usuário.
+      BASE_URL: https://nginx
+    volumes:
+      - ./tests:/work/tests:ro
+      - ./static:/work/static:ro
+      - ./cofre.py:/work/cofre.py:ro
+      # O código da API é montado para que os testes de expiração exercitem o
+      # job real, em vez de uma reimplementação.
+      - ./api:/work/api:ro
+    depends_on:
+      - nginx
+      - api
+      - postgres
+      - minio
+
 volumes:
   postgres_data:
   minio_data:
+  nginx_certs:

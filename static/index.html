@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Enviar arquivo — Troca confidencial</title>
+    <meta
+      name="description"
+      content="Cifragem no navegador com AES-256-GCM. O servidor recebe apenas bytes ilegíveis."
+    />
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="/css/estilo.css" />
+    <!-- Todo o JavaScript vive em arquivos externos: a CSP proíbe código
+         embutido, e não há um único atributo onclick neste documento. -->
+    <script type="module" src="/js/enviar.js"></script>
+  </head>
+  <body>
+    <header class="topo">
+      <a class="marca" href="/">cofre<span>.</span></a>
+      <nav aria-label="Telas">
+        <a href="/" aria-current="page">Enviar</a>
+        <a href="/receber.html">Receber</a>
+      </nav>
+    </header>
+
+    <main>
+      <p class="estado" id="estado" data-estado="repouso" role="status" aria-live="polite">
+        Em repouso
+      </p>
+
+      <h1>Enviar um arquivo</h1>
+      <p class="subtitulo">
+        O arquivo é cifrado nesta aba, antes de sair do seu computador. O
+        servidor recebe bytes ilegíveis e um localizador; a chave permanece com
+        você.
+      </p>
+
+      <!-- Passo 1: escolher o arquivo -->
+      <section id="passo-selecao" aria-labelledby="titulo-selecao">
+        <h2 id="titulo-selecao" class="sr-only" hidden>Escolha do arquivo</h2>
+        <div
+          class="dropzone"
+          id="dropzone"
+          role="button"
+          tabindex="0"
+          aria-describedby="dropzone-ajuda"
+        >
+          <strong class="dropzone-titulo">Arraste um arquivo ou clique para escolher</strong>
+          <span class="dropzone-ajuda" id="dropzone-ajuda">
+            Até 100 MB. Nada é enviado antes de você confirmar.
+          </span>
+        </div>
+        <input class="input-arquivo" type="file" id="entrada-arquivo" />
+      </section>
+
+      <!-- Passo 2: confirmar -->
+      <section class="cartao" id="painel-arquivo" hidden aria-labelledby="titulo-arquivo">
+        <h2 id="titulo-arquivo">Arquivo selecionado</h2>
+        <dl class="dados">
+          <dt>Nome</dt>
+          <dd id="arquivo-nome">—</dd>
+          <dt>Tamanho</dt>
+          <dd id="arquivo-tamanho">—</dd>
+        </dl>
+        <div class="acoes">
+          <button class="botao" type="button" id="botao-enviar">Cifrar e enviar</button>
+          <button class="botao botao-secundario" type="button" id="botao-trocar">
+            Escolher outro
+          </button>
+        </div>
+      </section>
+
+      <!-- Passo 3: progresso -->
+      <section class="cartao" id="painel-progresso" hidden aria-labelledby="titulo-progresso">
+        <h2 id="titulo-progresso">Processando</h2>
+
+        <div class="progresso">
+          <span class="progresso-titulo" id="rotulo-cifragem">Cifragem</span>
+          <div
+            id="progresso-cifragem"
+            class="progress-wrapper"
+            role="progressbar"
+            aria-labelledby="rotulo-cifragem"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            hidden
+          >
+            <div class="progress-track"><div class="progress-bar"></div></div>
+            <span class="progress-label"></span>
+          </div>
+        </div>
+
+        <div class="progresso">
+          <span class="progresso-titulo" id="rotulo-upload">Envio da cifra</span>
+          <div
+            id="progresso-upload"
+            class="progress-wrapper"
+            role="progressbar"
+            aria-labelledby="rotulo-upload"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            hidden
+          >
+            <div class="progress-track"><div class="progress-bar"></div></div>
+            <span class="progress-label"></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Passo 4: concluído -->
+      <section id="painel-resultado" hidden aria-labelledby="titulo-aviso">
+        <div class="aviso-critico">
+          <h2 id="titulo-aviso">Guarde o arquivo de credenciais. Sem ele, não há recuperação.</h2>
+          <p>
+            A chave que abre este arquivo existe apenas dentro do JSON que
+            acabou de ser baixado. Ela nunca foi enviada ao servidor e não está
+            armazenada em lugar nenhum além do seu disco.
+          </p>
+          <p>
+            <strong>
+              Se esse arquivo for perdido, o conteúdo é irrecuperável — inclusive
+              pelo administrador do sistema.
+            </strong>
+            Não existe "esqueci minha senha" aqui.
+          </p>
+          <p>
+            Envie o JSON ao destinatário por um canal diferente do que você usar
+            para avisá-lo sobre o arquivo.
+          </p>
+        </div>
+
+        <div class="cartao">
+          <h2>Envio concluído</h2>
+          <dl class="dados">
+            <dt>Arquivo</dt>
+            <dd id="resultado-nome">—</dd>
+            <dt>Tamanho original</dt>
+            <dd id="resultado-tamanho">—</dd>
+            <dt>Tamanho da cifra</dt>
+            <dd id="resultado-cifra">—</dd>
+            <dt>Localizador</dt>
+            <dd class="valor-longo" id="resultado-localizador">—</dd>
+            <dt>Expira em</dt>
+            <dd id="resultado-expiracao">—</dd>
+          </dl>
+          <div class="acoes">
+            <button class="botao" type="button" id="botao-baixar-credenciais">
+              Baixar credenciais novamente
+            </button>
+            <button class="botao botao-secundario" type="button" id="botao-novo-envio">
+              Enviar outro arquivo
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <p class="erro" id="erro" role="alert" hidden></p>
+    </main>
+
+    <footer class="rodape">
+      <p>
+        Cifragem AES-256-GCM executada no navegador. Os arquivos são apagados
+        automaticamente 24 horas após o envio.
+      </p>
+    </footer>
+  </body>
+</html>

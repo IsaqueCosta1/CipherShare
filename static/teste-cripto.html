@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Teste do núcleo criptográfico</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="/css/estilo.css" />
+    <script type="module" src="/js/teste-cripto.js"></script>
+  </head>
+  <body>
+    <header class="topo">
+      <a class="marca" href="/">cofre<span>.</span></a>
+      <nav aria-label="Telas">
+        <a href="/">Enviar</a>
+        <a href="/receber.html">Receber</a>
+        <a href="/teste-cripto.html" aria-current="page">Teste</a>
+      </nav>
+    </header>
+
+    <main>
+      <h1>Teste do núcleo criptográfico</h1>
+      <p class="subtitulo">
+        Esta página exercita o <code>crypto.js</code> sozinho: gera chave e
+        nonce, cifra, decifra, compara byte a byte e demonstra a detecção de
+        adulteração. Nenhuma requisição é feita ao servidor — o arquivo
+        escolhido não sai do seu computador.
+      </p>
+
+      <section id="passo-selecao">
+        <div
+          class="dropzone"
+          id="dropzone"
+          role="button"
+          tabindex="0"
+          aria-describedby="dropzone-ajuda"
+        >
+          <strong class="dropzone-titulo">Arraste um arquivo ou clique para escolher</strong>
+          <span class="dropzone-ajuda" id="dropzone-ajuda">
+            Prefira algo pequeno: tudo acontece na memória desta aba.
+          </span>
+        </div>
+        <input class="input-arquivo" type="file" id="entrada-arquivo" />
+      </section>
+
+      <div class="acoes">
+        <button class="botao" type="button" id="botao-rodar" disabled>
+          Cifrar e decifrar localmente
+        </button>
+        <button class="botao botao-secundario" type="button" id="botao-exportar" disabled>
+          Baixar .cifra e credenciais
+        </button>
+      </div>
+
+      <h2>Registro</h2>
+      <pre class="registro" id="registro" aria-live="polite">Escolha um arquivo para começar.</pre>
+
+      <div class="cartao">
+        <h2>Conferência cruzada com o cofre.py</h2>
+        <p>
+          O botão de exportação grava os dois arquivos que o
+          <code>cofre.py</code> entende. Para provar a interoperabilidade à mão:
+        </p>
+        <pre class="registro">python3 cofre.py decifrar arquivo.cifra arquivo.credenciais.json</pre>
+        <p>
+          O caminho inverso também vale: cifre com
+          <code>python3 cofre.py cifrar arquivo</code> e traga os dois arquivos
+          gerados para a tela de recebimento.
+        </p>
+      </div>
+    </main>
+
+    <footer class="rodape">
+      <p>
+        O teste automatizado equivalente vive em <code>tests/interop/</code> e
+        roda nos dois sentidos a cada execução da suíte.
+      </p>
+    </footer>
+  </body>
+</html>

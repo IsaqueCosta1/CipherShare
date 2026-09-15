@@ -1,0 +1,16 @@
+# Dependências da suíte de testes. Rodam em contêiner próprio, separado da API.
+pytest==9.1.1
+# A versão precisa casar com a tag da imagem no Dockerfile: o pacote Python e
+# os navegadores instalados na imagem são lançados juntos.
+playwright==1.62.0
+httpx==0.28.1
+
+# Lado Python da criptografia: é a mesma biblioteca que o cofre.py usa.
+cryptography==50.0.1
+
+# Necessárias para importar o código real de limpeza da API nos testes de
+# expiração, em vez de reimplementá-lo.
+SQLAlchemy==2.0.53
+psycopg[binary]==3.3.5
+minio==7.2.20
+pydantic-settings==2.15.0

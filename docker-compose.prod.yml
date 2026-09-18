@@ -1,0 +1,34 @@
+# Ajustes para rodar atrás do Nginx do host, no servidor labit.dev.br.
+#
+# Naquele servidor as portas 80 e 443 pertencem a um Nginx instalado no host,
+# que faz o proxy reverso de todos os projetos por `server_name`. O Nginx deste
+# projeto continua existindo e continua sendo quem aplica TLS, CSP, rate limit
+# e o log com localizador mascarado — ele apenas deixa de ser o primeiro a
+# receber a conexão, e passa a escutar só no loopback.
+#
+# Nunca sobe sozinho: é sempre somado ao arquivo base.
+#
+#     docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+#
+# Para não repetir os dois -f a cada comando:
+#     export COMPOSE_FILE=docker-compose.yml:docker-compose.prod.yml
+
+services:
+  nginx:
+    ports: !override
+      # Só o HTTPS, e só no loopback: quem alcança esta porta é o Nginx do
+      # host, ninguém mais. A porta 80 do contêiner não é publicada porque só
+      # redireciona para HTTPS, e esse redirecionamento agora é feito lá fora.
+      #
+      # O proxy do host fala HTTPS com este contêiner, apresentando-se ao
+      # certificado autoassinado gerado na subida. Isso é deliberado: manda a
+      # conexão para o bloco `server` que carrega todos os cabeçalhos de
+      # segurança, em vez de para o bloco 80, que não carrega nenhum.
+      - "127.0.0.1:${HTTPS_PORT:-8443}:443"
+
+  minio:
+    ports: !override
+      # O console do MinIO dá acesso total ao object storage. Fica só no
+      # loopback, alcançável por um túnel SSH a partir da sua máquina:
+      #     ssh -L 9002:localhost:9002 -i ~/.ssh/ciphershare_vps ubuntu@69.62.97.120
+      - "127.0.0.1:${MINIO_CONSOLE_PORT:-9002}:9001"

@@ -163,6 +163,22 @@ h2 {
   font-size: 0.85rem;
 }
 
+/* Assinatura institucional: o logo mantém o azul original do LABit, que tem
+   contraste suficiente sobre os dois fundos. */
+.rodape-labit {
+  display: flex;
+  justify-content: center;
+  margin: 24px 0 0;
+  padding-top: 24px;
+  border-top: 1px solid var(--borda);
+}
+
+.rodape-labit img {
+  display: block;
+  height: 40px;
+  width: auto;
+}
+
 /* --- Indicador de estado ------------------------------------------------- */
 
 .estado {

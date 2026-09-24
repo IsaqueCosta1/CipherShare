@@ -4,19 +4,20 @@ Sistema web para enviar um arquivo que só o destinatário consegue abrir. Toda 
 criptografia acontece no navegador: o servidor recebe bytes cifrados indexados
 por um localizador derivado da chave, e os apaga em 24 horas.
 
-**O servidor nunca vê a chave, o nonce nem o nome do arquivo original.** Não é
-uma promessa de política de privacidade — é uma propriedade verificável, e há um
-teste automatizado que intercepta todas as requisições de um envio completo para
-provar isso a cada execução da suíte.
+**O servidor nunca vê a chave, o nonce nem o nome do arquivo original.** É uma propriedade verificável, e há um teste automatizado que intercepta todas as requisições de um envio completo para provar isso a cada execução da suíte.
 
-| Documento | Para quê |
-|---|---|
-| [`ESTUDO.md`](ESTUDO.md) | Como o sistema funciona e por que foi feito assim |
-| [`FORMATO.md`](FORMATO.md) | A especificação criptográfica, para implementar outro cliente |
-| [`LIMITACOES.md`](LIMITACOES.md) | O que o sistema **não** protege. Leia antes de confiar nele |
-| [`PLANO-MVP.md`](PLANO-MVP.md) | A especificação original do projeto |
+
+| Documento                        | Para quê                                                      |
+| -------------------------------- | ------------------------------------------------------------- |
+| `[ESTUDO.md](ESTUDO.md)`         | Como o sistema funciona e por que foi feito assim             |
+| `[FORMATO.md](FORMATO.md)`       | A especificação criptográfica, para implementar outro cliente |
+| `[LIMITACOES.md](LIMITACOES.md)` | O que o sistema **não** protege. Leia antes de confiar nele   |
+| `[PLANO-MVP.md](PLANO-MVP.md)`   | A especificação original do projeto                           |
+
 
 ---
+
+
 
 ## Como subir
 
@@ -31,9 +32,7 @@ Na primeira subida o Compose baixa as imagens, constrói a imagem da API, aplica
 as migrations, cria o bucket no MinIO com a regra de expiração e gera um
 certificado TLS autoassinado. Nenhum passo manual é necessário.
 
-Depois disso, abra **<https://localhost>**. O navegador vai avisar que o
-certificado não é confiável — ele é autoassinado, gerado na sua máquina; aceite
-a exceção para seguir.
+Depois disso, abra **[https://localhost](https://localhost)**. O navegador vai avisar que o certificado não é confiável, ele é autoassinado, gerado na sua máquina; aceite a exceção para seguir.
 
 Conferência rápida pela linha de comando (o `-k` aceita o certificado local):
 
@@ -55,20 +54,24 @@ O `.env` controla as portas publicadas no host: `HTTP_PORT`, `HTTPS_PORT` e
 
 ---
 
-## As três telas
 
-| Endereço | O que faz |
-|---|---|
-| <https://localhost/> | Envio: escolher, cifrar, enviar, baixar as credenciais |
-| <https://localhost/receber.html> | Recebimento: credenciais, baixar, decifrar, salvar |
-| <https://localhost/teste-cripto.html> | Teste manual do núcleo criptográfico, sem tocar no servidor |
+
+## As telas
+
+
+| Endereço                                                                   | O que faz                                                   |
+| -------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| [https://localhost/](https://localhost/)                                   | Envio: escolher, cifrar, enviar, baixar as credenciais      |
+| [https://localhost/receber.html](https://localhost/receber.html)           | Recebimento: credenciais, baixar, decifrar, salvar          |
+| [https://localhost/teste-cripto.html](https://localhost/teste-cripto.html) | Teste manual do núcleo criptográfico, sem tocar no servidor |
+
 
 O fluxo completo é: quem envia escolhe um arquivo e recebe de volta um
-`credenciais-XXXXXXXX.json`; quem recebe abre a segunda tela e arrasta esse
-JSON. O arquivo de credenciais precisa viajar por um canal diferente do
-restante — a razão está na [limitação 4](LIMITACOES.md).
+`credenciais-XXXXXXXX.json`; quem recebe abre a segunda tela e arrasta esse JSON. O arquivo de credenciais precisa viajar por um canal diferente do restante, a razão está na [limitação 4](LIMITACOES.md).
 
 ---
+
+
 
 ## Como rodar os testes
 
@@ -94,16 +97,20 @@ docker compose --profile test run --rm -e BROWSERS=chromium tests pytest tests/
 
 O que cada pasta cobre:
 
-| Pasta | Cobertura |
-|---|---|
+
+| Pasta            | Cobertura                                                                                                                               |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
 | `tests/interop/` | O `cofre.py` e o `crypto.js` produzem e leem exatamente o mesmo formato, nos dois sentidos, incluindo o vetor publicado no `FORMATO.md` |
-| `tests/api/` | Os três endpoints, todos os casos de erro, os cabeçalhos de segurança e a CSP |
-| `tests/e2e/` | Fluxo completo no navegador, vigilância da rede, expiração com relógio manipulado e um arquivo de 50 MB conferido por hash |
+| `tests/api/`     | Os três endpoints, todos os casos de erro, os cabeçalhos de segurança e a CSP                                                           |
+| `tests/e2e/`     | Fluxo completo no navegador, vigilância da rede, expiração com relógio manipulado e um arquivo de 50 MB conferido por hash              |
+
 
 Os testes que dirigem o navegador rodam duas vezes, em Chromium e em Firefox.
 Para rodar em um só, defina `BROWSERS=chromium`.
 
 ---
+
+
 
 ## Linha de comando
 
@@ -131,6 +138,8 @@ docker compose exec api python manage.py orfaos --remover
 
 ---
 
+
+
 ## Arquitetura
 
 ```
@@ -138,12 +147,14 @@ Navegador  →  Nginx (TLS 1.3, CSP, rate limit)  →  FastAPI  →  MinIO    (c
                                                             →  Postgres (metadados)
 ```
 
-| Componente | Tecnologia | Papel |
-|---|---|---|
-| `nginx` | Nginx 1.27 | Única porta de entrada: TLS, cabeçalhos, limites, arquivos estáticos |
-| `api` | Python 3.12 + FastAPI | Três endpoints; nunca toca em chave nem em conteúdo |
-| `postgres` | PostgreSQL 16 | Uma tabela, `files`, com o mínimo indispensável |
-| `minio` | MinIO | Bytes cifrados, opacos, com lifecycle de 24h como rede de segurança |
+
+| Componente | Tecnologia            | Papel                                                                |
+| ---------- | --------------------- | -------------------------------------------------------------------- |
+| `nginx`    | Nginx 1.27            | Única porta de entrada: TLS, cabeçalhos, limites, arquivos estáticos |
+| `api`      | Python 3.12 + FastAPI | Três endpoints; nunca toca em chave nem em conteúdo                  |
+| `postgres` | PostgreSQL 16         | Uma tabela, `files`, com o mínimo indispensável                      |
+| `minio`    | MinIO                 | Bytes cifrados, opacos, com lifecycle de 24h como rede de segurança  |
+
 
 ```
 api/                    aplicação FastAPI
@@ -169,24 +180,23 @@ tests/                  suíte completa
 cofre.py                implementação de referência em Python
 ```
 
-O frontend não tem etapa de build: são arquivos `.html`, `.css` e `.js` servidos
-como estão. Editar uma tela e recarregar a página basta — não há bundler,
-transpilador ou framework no caminho.
+O frontend não tem etapa de build: são arquivos `.html`, `.css` e `.js` servidos como estão.
 
 ---
+
+
 
 ## Segurança
 
 O que está configurado:
 
 - **TLS 1.3** apenas, com certificado autoassinado para desenvolvimento.
-- **CSP sem `unsafe-inline`**: todo o JavaScript vive em arquivos externos e não
-  há um único `onclick=` nos documentos. Um script injetado na página não executa.
+- **CSP sem** `unsafe-inline`: todo o JavaScript vive em arquivos externos e não
+há um único `onclick=` nos documentos. Um script injetado na página não executa.
 - **HSTS**, `X-Content-Type-Options: nosniff`, `Referrer-Policy: no-referrer`,
-  `X-Frame-Options: DENY` e `Permissions-Policy` restritiva.
+`X-Frame-Options: DENY` e `Permissions-Policy` restritiva.
 - **Rate limiting por IP** no Nginx, separado para leitura e envio.
-- **Localizadores mascarados nos logs**: nem o Nginx nem a aplicação registram
-  os 64 caracteres completos — apenas os oito primeiros.
+- **Localizadores mascarados nos logs**: nem o Nginx nem a aplicação registram os 64 caracteres completos, apenas os oito primeiros.
 - **Limite de tamanho em dois lugares**: no proxy e na aplicação.
 
 Varredura de dependências (a suíte roda contra as versões fixadas em
@@ -201,11 +211,13 @@ Em produção, o certificado autoassinado precisa ser trocado por um emitido por
 uma autoridade reconhecida, e vale revisar a retenção do log de acesso do Nginx,
 que registra endereços IP como qualquer servidor web.
 
-**Antes de confiar no sistema, leia [`LIMITACOES.md`](LIMITACOES.md).** Em
+**Antes de confiar no sistema, leia** `[LIMITACOES.md](LIMITACOES.md)`**.** Em
 particular, a limitação 2: criptografia no navegador protege contra um servidor
 curioso, não contra um servidor malicioso.
 
 ---
+
+
 
 ## Comandos úteis
 
@@ -216,3 +228,4 @@ docker compose down                   # derrubar o ambiente
 docker compose down -v                # derrubar e apagar banco, storage e certificado
 docker compose exec api alembic current
 ```
+

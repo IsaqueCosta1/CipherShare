@@ -79,24 +79,19 @@ body {
   display: flex;
   flex-wrap: wrap;
   gap: 12px 24px;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   max-width: 760px;
   margin: 0 auto;
   padding: 24px 20px 0;
 }
 
-.marca {
-  font-family: var(--fonte-mono);
-  font-size: 0.95rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  color: var(--texto);
-  text-decoration: none;
-}
-
-.marca span {
-  color: var(--acento);
+/* Assinatura institucional: o logo mantém o azul original do LABit, que tem
+   contraste suficiente sobre os dois fundos. */
+.logo-labit {
+  display: block;
+  height: 32px;
+  width: auto;
 }
 
 .topo nav {
@@ -161,22 +156,6 @@ h2 {
   padding: 0 20px 48px;
   color: var(--texto-suave);
   font-size: 0.85rem;
-}
-
-/* Assinatura institucional: o logo mantém o azul original do LABit, que tem
-   contraste suficiente sobre os dois fundos. */
-.rodape-labit {
-  display: flex;
-  justify-content: center;
-  margin: 24px 0 0;
-  padding-top: 24px;
-  border-top: 1px solid var(--borda);
-}
-
-.rodape-labit img {
-  display: block;
-  height: 40px;
-  width: auto;
 }
 
 /* --- Indicador de estado ------------------------------------------------- */
